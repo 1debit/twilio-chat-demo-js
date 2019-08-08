@@ -550,6 +550,7 @@ div.edit-button {
 #channel-message-send input {
   display: inline-block;
   width: calc(100% - 90px);
+  margin-bottom: 5px;
   margin-left: 10px;
   height: 30px;
   right: 60px;

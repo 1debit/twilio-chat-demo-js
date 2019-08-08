@@ -426,6 +426,13 @@ function createMessage(message, $el) {
     .text(message.body)
     .appendTo($el);
 
+  if (message.type === 'media') {
+    message.media.getContentUrl().then(function(url) {
+      console.log("Media url:"+url);
+      var $image = $('<p><img width="100" height="100" src="' + url + '" ></p>');
+      $image.appendTo($el);
+    });
+  }
   var $editBody = $('<textarea class="edit-body"/>')
     .text(message.body)
     .appendTo($el);
@@ -595,6 +602,13 @@ function setActiveChannel(channel) {
   $('#send-message').off('click');
   $('#send-message').on('click', function() {
     var body = $('#message-body-input').val();
+    var formInputFile = $('#message-body-file')[0].files[0];
+    if (formInputFile) {
+      var formData = new FormData();
+      formData.append('file', formInputFile);
+      channel.sendMessage(formData);
+    }
+
     channel.sendMessage(body).then(function() {
       $('#message-body-input').val('').focus();
       $('#channel-messages').scrollTop($('#channel-messages ul').height());
