@@ -400,13 +400,36 @@ div.edit-button {
 }
 
 #channel-messages {
-  margin-bottom: 70px;
+  margin-bottom: 130px;
   position: relative;
   width: 100%;
-  height: calc(100% - 70px);
+  height: calc(100% - 130px);
   overflow-y: auto;
 }
 
+#channel-messages ul.picklist-options li.picklist-option {
+  background: white;
+  transition: background 0.2s ease-in;
+  -webkit-transition: background 0.2s ease-in;
+  margin-bottom: 5px;
+  cursor: pointer;
+  border-radius: 5px;
+
+}
+
+#channel-messages ul.picklist-options li.picklist-option::before {
+  content: '> ';
+}
+
+#channel-messages ul.picklist-options li.picklist-option:hover {
+  background: #1EC677;
+
+}
+
+#channel-messages .picklist-options {
+  padding: 10px;
+
+}
 
 #channel-messages ul {
   list-style-type: none;

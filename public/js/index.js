@@ -11,6 +11,17 @@ var userContext = { identity: null};
 $(document).ready(function() {
   $('#login-name').focus();
 
+  $('#channel-messages').delegate('.picklist-option', 'click', function(e) {
+    var link = $(this).data('link');
+    if (link) {
+        alert(`Link ${link}`);
+    }
+    else {
+      $('#message-body-input').val($(this).text());
+      $('#send-message').click();
+    }
+  });
+
   $('#login-button').on('click', function() {
     var identity = $('#login-name').val();
     if (!identity) { return; }
@@ -359,7 +370,7 @@ function removePublicChannel(channel) {
 }
 
 function updateMessages() {
-  $('#channel-messages ul').empty();
+  $('#channel-messages-container').empty();
   activeChannel.getMessages(30).then(function(page) {
     page.items.forEach(addMessage);
   });
@@ -426,6 +437,23 @@ function createMessage(message, $el) {
     .text(message.body)
     .appendTo($el);
 
+  if (message.attributes.options) {
+    var options = $('<ul class="picklist-options"></ul>').appendTo($el);
+
+    message.attributes.options.forEach((option)=> {
+      var deeplink_text = '';
+      var li = $(`<li class="picklist-option" />`);
+
+      if (option.link) {
+         deeplink_text = `(link: ${option.link})`;
+         li.data('link', option.link);
+      }
+      li.text(`${option.text} ${deeplink_text}`)
+        .appendTo(options);
+    });
+
+  }
+
   if (message.type === 'media') {
     message.media.getContentUrl().then(function(url) {
       console.log("Media url:"+url);
@@ -465,22 +493,22 @@ function prependMessage(message) {
   var $messages = $('#channel-messages');
   var $el = $('<li/>').attr('data-index', message.index);
   createMessage(message, $el);
-  $('#channel-messages ul').prepend($el);
+  $('#channel-messages-container').prepend($el);
 }
 
 function addMessage(message) {
   var $messages = $('#channel-messages');
-  var initHeight = $('#channel-messages ul').height();
+  var initHeight = $('#channel-messages-container').height();
   var $el = $('<li/>').attr('data-index', message.index);
   createMessage(message, $el);
 
-  $('#channel-messages ul').append($el);
+  $('#channel-messages-container').append($el);
 
   if (initHeight - 50 < $messages.scrollTop() + $messages.height()) {
-    $messages.scrollTop($('#channel-messages ul').height());
+    $messages.scrollTop($('#channel-messages-container').height());
   }
 
-  if ($('#channel-messages ul').height() <= $messages.height() &&
+  if ($('#channel-messages-container').height() <= $messages.height() &&
       message.index > message.channel.lastConsumedMessageIndex) {
     message.channel.updateLastConsumedMessageIndex(message.index);
   }
